@@ -8,6 +8,8 @@
 #include <string>
 
 namespace fsv {
+	using filter = std::function<bool(const char&)>;
+
 	class filtered_string_view {
 		class iter {
 		 public:
@@ -31,7 +33,20 @@ namespace fsv {
 		};
 
 	 public:
+		// constructor
+		filtered_string_view();
+		filtered_string_view(const std::string& str);
+		filtered_string_view(const std::string& str, filter predicate);
+		filtered_string_view(const char* str);
+		filtered_string_view(const char* str, filter predicate);
+
 	 private:
+		const char* data_;
+		std::size_t length_;
+		filter predicate_;
+
+		// default predicate
+		static const filter default_predicate;
 	};
 } // namespace fsv
 
