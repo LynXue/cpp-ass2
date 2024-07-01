@@ -44,4 +44,26 @@ namespace fsv {
 		other.predicate_ = default_predicate;
 	}
 
+	// assignment operator
+	auto filtered_string_view::operator=(const filtered_string_view& other) -> filtered_string_view& {
+		if (this != &other) {
+			data_ = other.data_;
+			length_ = other.length_;
+			predicate_ = other.predicate_;
+		}
+		return *this;
+	}
+
+	auto filtered_string_view::operator=(filtered_string_view&& other) noexcept -> filtered_string_view& {
+		if (this != &other) {
+			data_ = other.data_;
+			length_ = other.length_;
+			predicate_ = std::move(other.predicate_);
+			other.data_ = nullptr;
+			other.length_ = 0;
+			other.predicate_ = default_predicate;
+		}
+		return *this;
+	}
+
 } // namespace fsv
