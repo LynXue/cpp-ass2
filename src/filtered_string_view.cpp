@@ -30,4 +30,18 @@ namespace fsv {
 	, length_(std::strlen(str))
 	, predicate_(std::move(predicate)) {}
 
+	filtered_string_view::filtered_string_view(const filtered_string_view& other)
+	: data_(other.data_)
+	, length_(other.length_)
+	, predicate_(other.predicate_) {}
+
+	filtered_string_view::filtered_string_view(filtered_string_view&& other) noexcept
+	: data_(other.data_)
+	, length_(other.length_)
+	, predicate_(std::move(other.predicate_)) {
+		other.data_ = nullptr;
+		other.length_ = 0;
+		other.predicate_ = default_predicate;
+	}
+
 } // namespace fsv

@@ -39,6 +39,10 @@ namespace fsv {
 		filtered_string_view(const std::string& str, filter predicate);
 		filtered_string_view(const char* str);
 		filtered_string_view(const char* str, filter predicate);
+		filtered_string_view(const filtered_string_view& other);
+		filtered_string_view(filtered_string_view&& other) noexcept;
+
+		~filtered_string_view() = default;
 
 	 private:
 		const char* data_;
