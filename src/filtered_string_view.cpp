@@ -1,7 +1,6 @@
 #include "./filtered_string_view.h"
 #include <algorithm>
 #include <cstring>
-#include <stdexcept>
 
 // Implement here
 namespace fsv {
@@ -90,5 +89,37 @@ namespace fsv {
 			}
 		}
 		return result;
+	}
+
+	auto filtered_string_view::at(int index) const -> const char& {
+		if (index < 0) {
+			throw std::domain_error{"filtered_string_view::at(" + std::to_string(index) + "): invalid index"};
+		}
+		auto count = 0;
+		for (auto i = 0U; i < length_; ++i) {
+			if (predicate_(data_[i])) {
+				if (count == index) {
+					return data_[i];
+				}
+				++count;
+			}
+		}
+		throw std::domain_error{"filtered_string_view::at(" + std::to_string(index) + "): invalid index"};
+	}
+
+	auto filtered_string_view::size() const -> std::size_t {
+		return static_cast<std::size_t>(std::count_if(data_, data_ + length_, predicate_));
+	}
+
+	auto filtered_string_view::empty() const -> bool {
+		return size() == 0;
+	}
+
+	auto filtered_string_view::data() const -> const char* {
+		return data_;
+	}
+
+	auto filtered_string_view::predicate() const -> const filter& {
+		return predicate_;
 	}
 } // namespace fsv
