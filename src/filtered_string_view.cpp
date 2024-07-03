@@ -160,4 +160,40 @@ namespace fsv {
 		return lhs_it == lhs_end && rhs_it == rhs_end;
 	}
 
+	auto operator!=(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool {
+		return !(lhs == rhs);
+	}
+
+	auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering {
+		auto lhs_it = lhs.data();
+		auto rhs_it = rhs.data();
+		auto lhs_end = lhs.data() + lhs.length();
+		auto rhs_end = rhs.data() + rhs.length();
+
+		while (lhs_it != lhs_end && rhs_it != rhs_end) {
+			while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
+				++lhs_it;
+			}
+			while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
+				++rhs_it;
+			}
+			if (lhs_it != lhs_end && rhs_it != rhs_end) {
+				if (auto cmp = *lhs_it <=> *rhs_it; cmp != std::strong_ordering::equal) {
+					return cmp;
+				}
+				++lhs_it;
+				++rhs_it;
+			}
+		}
+
+		while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
+			++lhs_it;
+		}
+		while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
+			++rhs_it;
+		}
+
+		return (lhs_it == lhs_end) <=> (rhs_it == rhs_end);
+	}
+
 } // namespace fsv
