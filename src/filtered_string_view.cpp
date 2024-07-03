@@ -1,6 +1,7 @@
 #include "./filtered_string_view.h"
 #include <algorithm>
 #include <cstring>
+#include <iostream>
 
 // Implement here
 namespace fsv {
@@ -194,6 +195,15 @@ namespace fsv {
 		}
 
 		return (lhs_it == lhs_end) <=> (rhs_it == rhs_end);
+	}
+
+	auto operator<<(std::ostream& os, const filtered_string_view& fsv) -> std::ostream& {
+		for (auto i = 0U; i < fsv.length_; ++i) {
+			if (fsv.predicate_(fsv.data_[i])) {
+				os << fsv.data_[i];
+			}
+		}
+		return os;
 	}
 
 } // namespace fsv

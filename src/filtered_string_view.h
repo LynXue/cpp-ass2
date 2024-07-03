@@ -64,6 +64,7 @@ namespace fsv {
 		friend auto operator==(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool;
 		friend auto operator!=(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool;
 		friend auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering;
+		friend auto operator<<(std::ostream& os, const filtered_string_view& fsv) -> std::ostream&;
 
 	 private:
 		const char* data_;
