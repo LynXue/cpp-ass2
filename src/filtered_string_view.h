@@ -66,6 +66,9 @@ namespace fsv {
 		friend auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering;
 		friend auto operator<<(std::ostream& os, const filtered_string_view& fsv) -> std::ostream&;
 
+		// non-member utility functions
+		friend auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view;
+
 	 private:
 		const char* data_;
 		std::size_t length_;

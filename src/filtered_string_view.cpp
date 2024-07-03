@@ -206,4 +206,17 @@ namespace fsv {
 		return os;
 	}
 
+	// compose function
+	auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view {
+		filter composed_predicate = [filts](const char& c) {
+			for (const auto& f : filts) {
+				if (!f(c)) {
+					return false;
+				}
+			}
+			return true;
+		};
+		return filtered_string_view(fsv.data(), composed_predicate);
+	}
+
 } // namespace fsv
