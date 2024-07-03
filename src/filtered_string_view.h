@@ -68,6 +68,8 @@ namespace fsv {
 
 		// non-member utility functions
 		friend auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view;
+		friend auto split(const filtered_string_view& fsv, const filtered_string_view& tok)
+		    -> std::vector<filtered_string_view>;
 
 	 private:
 		const char* data_;

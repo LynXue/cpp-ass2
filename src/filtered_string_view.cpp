@@ -219,4 +219,33 @@ namespace fsv {
 		return filtered_string_view(fsv.data(), composed_predicate);
 	}
 
+	// split function
+	auto split(const filtered_string_view& fsv, const filtered_string_view& tok) -> std::vector<filtered_string_view> {
+		std::vector<filtered_string_view> result;
+
+		if (fsv.empty()) {
+			result.push_back(fsv);
+			return result;
+		}
+
+		const char* start = fsv.data();
+		const char* end = fsv.data() + fsv.length();
+		const char* delim_start = tok.data();
+		std::size_t delim_length = tok.length();
+		const char* current = start;
+		while (current < end) {
+			const char* next_delim = std::search(current, end, delim_start, delim_start + delim_length);
+			if (next_delim == end) {
+				result.emplace_back(current, fsv.predicate_);
+				break;
+			}
+
+			result.emplace_back(current,
+			                    [current, next_delim](const char& c) { return &c >= current && &c < next_delim; });
+			current = next_delim + delim_length;
+		}
+
+		return result;
+	}
+
 } // namespace fsv
