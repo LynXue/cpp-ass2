@@ -119,7 +119,45 @@ namespace fsv {
 		return data_;
 	}
 
+	auto filtered_string_view::length() const -> std::size_t {
+		return length_;
+	}
+
 	auto filtered_string_view::predicate() const -> const filter& {
 		return predicate_;
 	}
+
+	// Non-member operators
+	auto operator==(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool {
+		auto lhs_it = lhs.data();
+		auto rhs_it = rhs.data();
+		auto lhs_end = lhs.data() + lhs.length();
+		auto rhs_end = rhs.data() + rhs.length();
+
+		while (lhs_it != lhs_end && rhs_it != rhs_end) {
+			while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
+				++lhs_it;
+			}
+			while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
+				++rhs_it;
+			}
+			if (lhs_it != lhs_end && rhs_it != rhs_end) {
+				if (*lhs_it != *rhs_it) {
+					return false;
+				}
+				++lhs_it;
+				++rhs_it;
+			}
+		}
+
+		while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
+			++lhs_it;
+		}
+		while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
+			++rhs_it;
+		}
+
+		return lhs_it == lhs_end && rhs_it == rhs_end;
+	}
+
 } // namespace fsv

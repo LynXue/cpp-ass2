@@ -58,6 +58,10 @@ namespace fsv {
 		auto empty() const -> bool;
 		auto data() const -> const char*;
 		auto predicate() const -> const filter&;
+		auto length() const -> std::size_t;
+
+		// non-member operators
+		friend auto operator==(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool;
 
 	 private:
 		const char* data_;
