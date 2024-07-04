@@ -267,4 +267,37 @@ namespace fsv {
 
 		return filtered_string_view(substr_data, substr_predicate);
 	}
+
+	void filtered_string_view::iter::advance() {
+		do {
+			++ptr_;
+		} while (ptr_ != nullptr && view_ != nullptr && *ptr_ != '\0' && !view_->predicate()(*ptr_));
+	}
+
+	void filtered_string_view::iter::retreat() {
+		do {
+			--ptr_;
+		} while (ptr_ != nullptr && view_ != nullptr && ptr_ >= view_->data() && !view_->predicate()(*ptr_));
+	}
+
+	// iterator class implementation
+	filtered_string_view::iter::iter()
+	: ptr_(nullptr)
+	, view_(nullptr) {}
+
+	filtered_string_view::iter::iter(const char* ptr, const filtered_string_view* view)
+	: ptr_(ptr)
+	, view_(view) {
+		if (ptr_ != nullptr && view_ != nullptr && !view_->predicate()(*ptr_)) {
+			advance();
+		}
+	}
+
+	auto filtered_string_view::iter::operator*() const -> reference {
+		return *ptr_;
+	}
+
+	auto filtered_string_view::iter::operator->() const -> pointer {
+		return ptr_;
+	}
 } // namespace fsv

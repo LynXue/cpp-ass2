@@ -14,11 +14,17 @@ namespace fsv {
 		class iter {
 		 public:
 			using MEMBER_TYPEDEFS_GO_HERE = void;
+			using iterator_category = std::bidirectional_iterator_tag;
+			using value_type = char;
+			using difference_type = std::ptrdiff_t;
+			using pointer = const char*;
+			using reference = const char&;
 
 			iter();
+			iter(const char* ptr, const filtered_string_view* view);
 
-			auto operator*() const -> void; // change this
-			auto operator->() const -> void; // change this
+			auto operator*() const -> reference;
+			auto operator->() const -> pointer;
 
 			auto operator++() -> iter&;
 			auto operator++(int) -> iter;
@@ -30,6 +36,10 @@ namespace fsv {
 
 		 private:
 			/* Implementation-specific private members */
+			const char* ptr_;
+			const filtered_string_view* view_;
+			void advance();
+			void retreat();
 		};
 
 	 public:
