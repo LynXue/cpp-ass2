@@ -300,4 +300,34 @@ namespace fsv {
 	auto filtered_string_view::iter::operator->() const -> pointer {
 		return ptr_;
 	}
+
+	auto filtered_string_view::iter::operator++() -> iter& {
+		advance();
+		return *this;
+	}
+
+	auto filtered_string_view::iter::operator++(int) -> iter {
+		iter temp = *this;
+		advance();
+		return temp;
+	}
+
+	auto filtered_string_view::iter::operator--() -> iter& {
+		retreat();
+		return *this;
+	}
+
+	auto filtered_string_view::iter::operator--(int) -> iter {
+		iter temp = *this;
+		retreat();
+		return temp;
+	}
+
+	auto operator==(const filtered_string_view::iterator& lhs, const filtered_string_view::iterator& rhs) -> bool {
+		return lhs.ptr_ == rhs.ptr_;
+	}
+
+	auto operator!=(const filtered_string_view::iterator& lhs, const filtered_string_view::iterator& rhs) -> bool {
+		return !(lhs == rhs);
+	}
 } // namespace fsv
