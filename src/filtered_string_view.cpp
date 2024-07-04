@@ -330,4 +330,37 @@ namespace fsv {
 	auto operator!=(const filtered_string_view::iterator& lhs, const filtered_string_view::iterator& rhs) -> bool {
 		return !(lhs == rhs);
 	}
+
+	// iterator functions
+	auto filtered_string_view::begin() const -> const_iterator {
+		return const_iterator(data_, this);
+	}
+
+	auto filtered_string_view::end() const -> const_iterator {
+		return const_iterator(data_ + length_, this);
+	}
+
+	auto filtered_string_view::cbegin() const -> const_iterator {
+		return begin();
+	}
+
+	auto filtered_string_view::cend() const -> const_iterator {
+		return end();
+	}
+
+	auto filtered_string_view::rbegin() const -> std::reverse_iterator<const_iterator> {
+		return std::reverse_iterator<const_iterator>(end());
+	}
+
+	auto filtered_string_view::rend() const -> std::reverse_iterator<const_iterator> {
+		return std::reverse_iterator<const_iterator>(begin());
+	}
+
+	auto filtered_string_view::crbegin() const -> std::reverse_iterator<const_iterator> {
+		return rbegin();
+	}
+
+	auto filtered_string_view::crend() const -> std::reverse_iterator<const_iterator> {
+		return rend();
+	}
 } // namespace fsv
