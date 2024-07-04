@@ -66,11 +66,6 @@ namespace fsv {
 		friend auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering;
 		friend auto operator<<(std::ostream& os, const filtered_string_view& fsv) -> std::ostream&;
 
-		// non-member utility functions
-		friend auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view;
-		friend auto split(const filtered_string_view& fsv, const filtered_string_view& tok)
-		    -> std::vector<filtered_string_view>;
-
 	 private:
 		const char* data_;
 		std::size_t length_;
@@ -79,6 +74,11 @@ namespace fsv {
 		// default predicate
 		static const filter default_predicate;
 	};
+
+	// non-member utility functions
+	auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view;
+	auto split(const filtered_string_view& fsv, const filtered_string_view& tok) -> std::vector<filtered_string_view>;
+	auto substr(const filtered_string_view& fsv, int pos = 0, int count = 0) -> filtered_string_view;
 } // namespace fsv
 
 #endif // COMP6771_ASS2_FSV_H

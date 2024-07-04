@@ -236,7 +236,7 @@ namespace fsv {
 		while (current < end) {
 			const char* next_delim = std::search(current, end, delim_start, delim_start + delim_length);
 			if (next_delim == end) {
-				result.emplace_back(current, fsv.predicate_);
+				result.emplace_back(current, fsv.predicate());
 				break;
 			}
 
@@ -248,4 +248,23 @@ namespace fsv {
 		return result;
 	}
 
+	// substr function
+	auto substr(const filtered_string_view& fsv, int pos, int count) -> filtered_string_view {
+		if (pos < 0 || pos > static_cast<int>(fsv.length())) {
+			throw std::out_of_range{"filtered_string_view::substr(" + std::to_string(pos) + ", " + std::to_string(count)
+			                        + "): invalid position"};
+		}
+
+		std::size_t rcount = (count <= 0) ? fsv.size() - static_cast<std::size_t>(pos) : static_cast<std::size_t>(count);
+		if (static_cast<std::size_t>(pos) + rcount > fsv.length()) {
+			rcount = fsv.length() - static_cast<std::size_t>(pos);
+		}
+
+		const char* substr_data = fsv.data() + pos;
+		filter substr_predicate = [substr_data, rcount](const char& c) {
+			return &c >= substr_data && &c < substr_data + rcount;
+		};
+
+		return filtered_string_view(substr_data, substr_predicate);
+	}
 } // namespace fsv
