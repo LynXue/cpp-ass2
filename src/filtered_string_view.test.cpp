@@ -77,3 +77,48 @@ TEST_CASE("Assignment operator") {
 	REQUIRE(sv1.size() == sv2.size());
 	REQUIRE(sv1.data() == sv2.data());
 }
+
+TEST_CASE("Move assignment operator") {
+	std::string str = "transfer";
+	fsv::filtered_string_view sv1(str);
+	fsv::filtered_string_view sv2;
+	sv2 = std::move(sv1);
+	REQUIRE(sv2.size() == str.size());
+	REQUIRE(sv2.data() == str.data());
+	REQUIRE(sv1.size() == 0);
+	REQUIRE(sv1.data() == nullptr);
+}
+
+TEST_CASE("String conversion") {
+	std::string str = "convertme";
+	fsv::filtered_string_view sv(str);
+	std::string result = static_cast<std::string>(sv);
+	REQUIRE(result == str);
+}
+
+TEST_CASE("Subscript operator") {
+	std::string str = "indexing";
+	fsv::filtered_string_view sv(str);
+	REQUIRE(sv[0] == 'i');
+	REQUIRE(sv[1] == 'n');
+	REQUIRE(sv[2] == 'd');
+}
+
+TEST_CASE("At function") {
+	std::string str = "position";
+	fsv::filtered_string_view sv(str);
+	REQUIRE(sv.at(0) == 'p');
+	REQUIRE(sv.at(1) == 'o');
+	REQUIRE(sv.at(2) == 's');
+	REQUIRE_THROWS_AS(sv.at(50), std::domain_error);
+}
+
+TEST_CASE("Iterators") {
+	std::string str = "iterator";
+	fsv::filtered_string_view sv(str);
+	std::string result;
+	for (auto it = sv.begin(); it != sv.end(); ++it) {
+		result.push_back(*it);
+	}
+	REQUIRE(result == str);
+}
