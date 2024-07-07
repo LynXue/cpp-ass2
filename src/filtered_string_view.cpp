@@ -120,10 +120,6 @@ namespace fsv {
 		return data_;
 	}
 
-	auto filtered_string_view::length() const -> std::size_t {
-		return length_;
-	}
-
 	auto filtered_string_view::predicate() const -> const filter& {
 		return predicate_;
 	}
@@ -132,8 +128,8 @@ namespace fsv {
 	auto operator==(const filtered_string_view& lhs, const filtered_string_view& rhs) -> bool {
 		auto lhs_it = lhs.data();
 		auto rhs_it = rhs.data();
-		auto lhs_end = lhs.data() + lhs.length();
-		auto rhs_end = rhs.data() + rhs.length();
+		auto lhs_end = lhs.data() + lhs.size();
+		auto rhs_end = rhs.data() + rhs.size();
 
 		while (lhs_it != lhs_end && rhs_it != rhs_end) {
 			while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
@@ -168,8 +164,8 @@ namespace fsv {
 	auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering {
 		auto lhs_it = lhs.data();
 		auto rhs_it = rhs.data();
-		auto lhs_end = lhs.data() + lhs.length();
-		auto rhs_end = rhs.data() + rhs.length();
+		auto lhs_end = lhs.data() + lhs.size();
+		auto rhs_end = rhs.data() + rhs.size();
 
 		while (lhs_it != lhs_end && rhs_it != rhs_end) {
 			while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
@@ -229,9 +225,9 @@ namespace fsv {
 		}
 
 		const char* start = fsv.data();
-		const char* end = fsv.data() + fsv.length();
+		const char* end = fsv.data() + fsv.size();
 		const char* delim_start = tok.data();
-		std::size_t delim_length = tok.length();
+		std::size_t delim_length = tok.size();
 		const char* current = start;
 		while (current < end) {
 			const char* next_delim = std::search(current, end, delim_start, delim_start + delim_length);
@@ -250,14 +246,14 @@ namespace fsv {
 
 	// substr function
 	auto substr(const filtered_string_view& fsv, int pos, int count) -> filtered_string_view {
-		if (pos < 0 || pos > static_cast<int>(fsv.length())) {
+		if (pos < 0 || pos > static_cast<int>(fsv.size())) {
 			throw std::out_of_range{"filtered_string_view::substr(" + std::to_string(pos) + ", " + std::to_string(count)
 			                        + "): invalid position"};
 		}
 
 		std::size_t rcount = (count <= 0) ? fsv.size() - static_cast<std::size_t>(pos) : static_cast<std::size_t>(count);
-		if (static_cast<std::size_t>(pos) + rcount > fsv.length()) {
-			rcount = fsv.length() - static_cast<std::size_t>(pos);
+		if (static_cast<std::size_t>(pos) + rcount > fsv.size()) {
+			rcount = fsv.size() - static_cast<std::size_t>(pos);
 		}
 
 		const char* substr_data = fsv.data() + pos;

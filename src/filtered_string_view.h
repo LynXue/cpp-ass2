@@ -45,6 +45,8 @@ namespace fsv {
 	 public:
 		using iterator = iter;
 		using const_iterator = iter;
+		using reverse_iterator = std::reverse_iterator<const_iterator>;
+		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 		// constructor
 		filtered_string_view();
@@ -71,7 +73,6 @@ namespace fsv {
 		auto empty() const -> bool;
 		auto data() const -> const char*;
 		auto predicate() const -> const filter&;
-		auto length() const -> std::size_t;
 
 		// iterator functions
 		auto begin() const -> const_iterator;
