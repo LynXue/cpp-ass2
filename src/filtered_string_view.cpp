@@ -132,35 +132,14 @@ namespace fsv {
 	}
 
 	auto operator<=>(const filtered_string_view& lhs, const filtered_string_view& rhs) -> std::strong_ordering {
-		auto lhs_it = lhs.data();
-		auto rhs_it = rhs.data();
-		auto lhs_end = lhs.data() + lhs.size();
-		auto rhs_end = rhs.data() + rhs.size();
-
-		while (lhs_it != lhs_end && rhs_it != rhs_end) {
-			while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
-				++lhs_it;
-			}
-			while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
-				++rhs_it;
-			}
-			if (lhs_it != lhs_end && rhs_it != rhs_end) {
-				if (auto cmp = *lhs_it <=> *rhs_it; cmp != std::strong_ordering::equal) {
-					return cmp;
-				}
-				++lhs_it;
-				++rhs_it;
+		int lhs_length = static_cast<int>(lhs.size());
+		int rhs_length = static_cast<int>(rhs.size());
+		for (int i = 0; i < std::min(lhs_length, rhs_length); ++i) {
+			if (auto cmp = lhs[i] <=> rhs[i]; cmp != std::strong_ordering::equal) {
+				return cmp;
 			}
 		}
-
-		while (lhs_it != lhs_end && !lhs.predicate()(*lhs_it)) {
-			++lhs_it;
-		}
-		while (rhs_it != rhs_end && !rhs.predicate()(*rhs_it)) {
-			++rhs_it;
-		}
-
-		return (lhs_it == lhs_end) <=> (rhs_it == rhs_end);
+		return lhs_length <=> rhs_length;
 	}
 
 	auto operator<<(std::ostream& os, const filtered_string_view& fsv) -> std::ostream& {

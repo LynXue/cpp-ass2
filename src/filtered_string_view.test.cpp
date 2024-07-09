@@ -129,17 +129,30 @@ TEST_CASE("Size function") {
 	REQUIRE(sv2.size() == 5);
 }
 
-TEST_CASE("Equality comparison") {
+TEST_CASE("Equality and relational comparison") {
 	auto const vowels = std::set<char>{'a', 'e', 'i', 'o', 'u'};
 	auto const is_vowel = [&vowels](const char& c) { return vowels.contains(c); };
 
-	auto const filtered1 = fsv::filtered_string_view{"education", is_vowel};
-	auto const filtered2 = fsv::filtered_string_view{"meuaio", is_vowel};
-	auto const filtered3 = fsv::filtered_string_view{"abcdefg", is_vowel};
+	auto const sv1 = fsv::filtered_string_view{"education", is_vowel};
+	auto const sv2 = fsv::filtered_string_view{"ffeuaio", is_vowel};
+	auto const sv3 = fsv::filtered_string_view{"abcdefg", is_vowel};
 
-	REQUIRE(filtered1 == filtered2);
-	REQUIRE(filtered1 != filtered3);
-	REQUIRE(filtered2 != filtered3);
+	REQUIRE(sv1 == sv2);
+	REQUIRE(sv1 != sv3);
+	REQUIRE(sv2 != sv3);
+
+	REQUIRE(sv1 > sv3);
+	REQUIRE(sv1 >= sv3);
+	REQUIRE(!(sv1 < sv3));
+	REQUIRE(!(sv1 <= sv3));
+	REQUIRE((sv1 <=> sv3) == std::strong_ordering::greater);
+}
+
+TEST_CASE("filtered_string_view output stream") {
+	auto fsv = fsv::filtered_string_view{"c++ > golang > rust", [](const char& c) { return c == 'c' || c == '+'; }};
+	std::ostringstream oss;
+	oss << fsv;
+	REQUIRE(oss.str() == "c++");
 }
 
 TEST_CASE("Iterators") {
