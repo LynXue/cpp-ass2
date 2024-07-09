@@ -155,6 +155,44 @@ TEST_CASE("filtered_string_view output stream") {
 	REQUIRE(oss.str() == "c++");
 }
 
+TEST_CASE("compose function") {
+	auto best_languages = fsv::filtered_string_view{"c / c++"};
+	auto vf = std::vector<fsv::filter>{
+	    [](const char& c) { return c == 'c' || c == '+' || c == '/'; },
+	    [](const char& c) { return c > ' '; },
+	};
+
+	auto sv = compose(best_languages, vf);
+	std::ostringstream oss;
+	oss << sv;
+	REQUIRE(oss.str() == "c/c++");
+}
+
+TEST_CASE("split function") {
+	auto interest = std::set<char>{'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', ' ', '/'};
+	auto sv = fsv::filtered_string_view{"0xDEADBEEF / 0xdeadbeef",
+	                                    [&interest](const char& c) { return interest.contains(c); }};
+	auto tok = fsv::filtered_string_view{" / "};
+	auto v = split(sv, tok);
+
+	REQUIRE(v.size() == 2);
+	std::ostringstream oss1, oss2;
+	oss1 << v[0];
+	oss2 << v[1];
+	REQUIRE(oss1.str() == "DEADBEEF");
+	REQUIRE(oss2.str() == "deadbeef");
+
+	auto sv2 = fsv::filtered_string_view{"xax"};
+	auto tok2 = fsv::filtered_string_view{"x"};
+	auto v2 = split(sv2, tok2);
+	REQUIRE(v2.size() == 3);
+	REQUIRE(v2[0].empty());
+	std::ostringstream oss3;
+	oss3 << v2[1];
+	REQUIRE(oss3.str() == "a");
+	REQUIRE(v2[2].empty());
+}
+
 TEST_CASE("Iterators") {
 	std::string str = "iterator";
 	fsv::filtered_string_view sv(str);

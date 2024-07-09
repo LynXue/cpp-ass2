@@ -110,6 +110,10 @@ namespace fsv {
 		return data_;
 	}
 
+	auto filtered_string_view::length() const -> std::size_t {
+		return length_;
+	}
+
 	auto filtered_string_view::predicate() const -> const filter& {
 		return predicate_;
 	}

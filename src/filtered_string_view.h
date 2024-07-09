@@ -71,6 +71,7 @@ namespace fsv {
 		auto empty() const -> bool;
 		auto data() const -> const char*;
 		auto predicate() const -> const filter&;
+		auto length() const -> std::size_t;
 
 		// iterator functions
 		auto begin() const -> const_iterator;
@@ -100,7 +101,7 @@ namespace fsv {
 	// non-member utility functions
 	auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view;
 	auto split(const filtered_string_view& fsv, const filtered_string_view& tok) -> std::vector<filtered_string_view>;
-	auto substr(const filtered_string_view& fsv, int pos = 0, int count = 0) -> filtered_string_view;
+	auto substr(const filtered_string_view& fsv, int pos, int count) -> filtered_string_view;
 } // namespace fsv
 
 #endif // COMP6771_ASS2_FSV_H
