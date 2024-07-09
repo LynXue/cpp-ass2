@@ -191,6 +191,14 @@ TEST_CASE("split function") {
 	oss3 << v2[1];
 	REQUIRE(oss3.str() == "a");
 	REQUIRE(v2[2].empty());
+
+	auto sv3 = fsv::filtered_string_view{"xx"};
+	auto tok3 = fsv::filtered_string_view{"x"};
+	auto v3 = split(sv3, tok3);
+	REQUIRE(v3.size() == 3);
+	REQUIRE(v3[0].empty());
+	REQUIRE(v3[1].empty());
+	REQUIRE(v3[2].empty());
 }
 
 TEST_CASE("Iterators") {
