@@ -129,6 +129,19 @@ TEST_CASE("Size function") {
 	REQUIRE(sv2.size() == 5);
 }
 
+TEST_CASE("Equality comparison") {
+	auto const vowels = std::set<char>{'a', 'e', 'i', 'o', 'u'};
+	auto const is_vowel = [&vowels](const char& c) { return vowels.contains(c); };
+
+	auto const filtered1 = fsv::filtered_string_view{"education", is_vowel};
+	auto const filtered2 = fsv::filtered_string_view{"meuaio", is_vowel};
+	auto const filtered3 = fsv::filtered_string_view{"abcdefg", is_vowel};
+
+	REQUIRE(filtered1 == filtered2);
+	REQUIRE(filtered1 != filtered3);
+	REQUIRE(filtered2 != filtered3);
+}
+
 TEST_CASE("Iterators") {
 	std::string str = "iterator";
 	fsv::filtered_string_view sv(str);
