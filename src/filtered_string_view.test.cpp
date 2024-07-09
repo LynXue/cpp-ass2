@@ -2,6 +2,7 @@
 
 #include <catch2/catch.hpp>
 #include <cstring>
+#include <set>
 
 TEST_CASE("Default constructor") {
 	fsv::filtered_string_view sv;
@@ -70,21 +71,24 @@ TEST_CASE("Move constructor") {
 
 TEST_CASE("Assignment operator") {
 	std::string str1 = "assign1";
-	std::string str2 = "assign2";
-	fsv::filtered_string_view sv1(str1);
+	std::string str2 = "hello";
+	auto pred = [](const char& c) { return c == 'a' || c == 's'; };
+	fsv::filtered_string_view sv1(str1, pred);
 	fsv::filtered_string_view sv2(str2);
-	sv1 = sv2;
+	sv2 = sv1;
+	REQUIRE(sv1.size() == 3);
 	REQUIRE(sv1.size() == sv2.size());
 	REQUIRE(sv1.data() == sv2.data());
 }
 
 TEST_CASE("Move assignment operator") {
 	std::string str = "transfer";
-	fsv::filtered_string_view sv1(str);
+	auto pred = [](const char& c) { return c == 't' || c == 'r'; };
+	fsv::filtered_string_view sv1(str, pred);
 	fsv::filtered_string_view sv2;
+	REQUIRE(sv1.size() == 3);
 	sv2 = std::move(sv1);
-	REQUIRE(sv2.size() == str.size());
-	REQUIRE(sv2.data() == str.data());
+	REQUIRE(sv2.size() == 3);
 	REQUIRE(sv1.size() == 0);
 	REQUIRE(sv1.data() == nullptr);
 }
@@ -98,19 +102,31 @@ TEST_CASE("String conversion") {
 
 TEST_CASE("Subscript operator") {
 	std::string str = "indexing";
-	fsv::filtered_string_view sv(str);
+	auto pred = [](const char& c) { return c == 'i' || c == 'n'; };
+	fsv::filtered_string_view sv(str, pred);
 	REQUIRE(sv[0] == 'i');
 	REQUIRE(sv[1] == 'n');
-	REQUIRE(sv[2] == 'd');
+	REQUIRE(sv[2] == 'i');
+	REQUIRE(sv[3] == 'n');
 }
 
 TEST_CASE("At function") {
 	std::string str = "position";
-	fsv::filtered_string_view sv(str);
+	auto pred = [](const char& c) { return c == 'p' || c == 'o'; };
+	fsv::filtered_string_view sv(str, pred);
 	REQUIRE(sv.at(0) == 'p');
 	REQUIRE(sv.at(1) == 'o');
-	REQUIRE(sv.at(2) == 's');
-	REQUIRE_THROWS_AS(sv.at(50), std::domain_error);
+	REQUIRE(sv.at(2) == 'o');
+	REQUIRE_THROWS_AS(sv.at(3), std::domain_error);
+}
+
+TEST_CASE("Size function") {
+	auto vowels = std::set<char>{'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U'};
+	auto is_vowel = [&vowels](const char& c) { return vowels.contains(c); };
+	fsv::filtered_string_view sv{"Malamute", is_vowel};
+	fsv::filtered_string_view sv2{"hello"};
+	REQUIRE(sv.size() == 4);
+	REQUIRE(sv2.size() == 5);
 }
 
 TEST_CASE("Iterators") {

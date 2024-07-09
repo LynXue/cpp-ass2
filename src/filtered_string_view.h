@@ -65,6 +65,7 @@ namespace fsv {
 		// string type conversion
 		explicit operator std::string() const;
 
+		// member function
 		auto at(int index) const -> const char&;
 		auto size() const -> std::size_t;
 		auto empty() const -> bool;
