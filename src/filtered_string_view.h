@@ -13,11 +13,10 @@ namespace fsv {
 	class filtered_string_view {
 		class iter {
 		 public:
-			using MEMBER_TYPEDEFS_GO_HERE = void;
 			using iterator_category = std::bidirectional_iterator_tag;
 			using value_type = char;
 			using difference_type = std::ptrdiff_t;
-			using pointer = const char*;
+			using pointer = void;
 			using reference = const char&;
 
 			iter();
@@ -50,10 +49,8 @@ namespace fsv {
 
 		// constructor
 		filtered_string_view();
-		filtered_string_view(const std::string& str);
-		filtered_string_view(const std::string& str, filter predicate);
-		filtered_string_view(const char* str);
-		filtered_string_view(const char* str, filter predicate);
+		filtered_string_view(const std::string& str, filter predicate = default_predicate);
+		filtered_string_view(const char* str, filter predicate = default_predicate);
 		filtered_string_view(const filtered_string_view& other);
 		filtered_string_view(filtered_string_view&& other) noexcept;
 
