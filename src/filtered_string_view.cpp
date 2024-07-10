@@ -200,22 +200,27 @@ namespace fsv {
 
 	// substr function
 	auto substr(const filtered_string_view& fsv, int pos, int count) -> filtered_string_view {
-		if (pos < 0 || pos > static_cast<int>(fsv.size())) {
+		if (pos < 0 || static_cast<std::size_t>(pos) > fsv.size()) {
 			throw std::out_of_range{"filtered_string_view::substr(" + std::to_string(pos) + ", " + std::to_string(count)
 			                        + "): invalid position"};
 		}
 
-		std::size_t rcount = (count <= 0) ? fsv.size() - static_cast<std::size_t>(pos) : static_cast<std::size_t>(count);
-		if (static_cast<std::size_t>(pos) + rcount > fsv.size()) {
-			rcount = fsv.size() - static_cast<std::size_t>(pos);
+		std::size_t start_pos = static_cast<std::size_t>(pos);
+		std::size_t rcount = (count <= 0) ? fsv.size() - start_pos : static_cast<std::size_t>(count);
+		if (start_pos + rcount > fsv.size()) {
+			rcount = fsv.size() - start_pos;
 		}
 
-		const char* substr_data = fsv.data() + pos;
-		filter substr_predicate = [substr_data, rcount](const char& c) {
-			return &c >= substr_data && &c < substr_data + rcount;
+		filter new_predicate = [fsv, start_pos, rcount](const char& c) {
+			for (std::size_t i = 0; i < rcount; ++i) {
+				if (fsv[static_cast<int>(start_pos + i)] == c) {
+					return fsv.predicate()(c);
+				}
+			}
+			return false;
 		};
 
-		return filtered_string_view(substr_data, substr_predicate);
+		return filtered_string_view(fsv.data() + start_pos, new_predicate);
 	}
 
 	void filtered_string_view::iter::advance() {

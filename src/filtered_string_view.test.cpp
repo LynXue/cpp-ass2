@@ -220,20 +220,17 @@ TEST_CASE("substr function") {
 		REQUIRE(oss.str() == "SD");
 	}
 
-	SECTION("Empty substring") {
-		auto sv = fsv::filtered_string_view{"Empty String Test"};
-		auto sub_sv = fsv::substr(sv, 5, 0);
-		std::ostringstream oss;
-		oss << sub_sv;
-		REQUIRE(oss.str() == "");
-	}
-
-	SECTION("Negative count resulting in full substring from pos") {
-		auto sv = fsv::filtered_string_view{"Full Substring Test"};
-		auto sub_sv = fsv::substr(sv, 5, -1);
-		std::ostringstream oss;
-		oss << sub_sv;
-		REQUIRE(oss.str() == "Substring Test");
+	SECTION("count <= 0") {
+		auto sv = fsv::filtered_string_view{"HELLo", pred};
+		auto sv2 = fsv::filtered_string_view{"HELLO World", pred};
+		auto sub_sv1 = fsv::substr(sv, 3);
+		auto sub_sv2 = fsv::substr(sv2, 3, -5);
+		std::ostringstream oss1;
+		std::ostringstream oss2;
+		oss1 << sub_sv1;
+		oss2 << sub_sv2;
+		REQUIRE(oss1.str() == "L");
+		REQUIRE(oss2.str() == "LOW");
 	}
 
 	SECTION("Count exceeding the length of the string") {
@@ -241,7 +238,7 @@ TEST_CASE("substr function") {
 		auto sub_sv = fsv::substr(sv, 8, 50);
 		std::ostringstream oss;
 		oss << sub_sv;
-		REQUIRE(oss.str() == "Test");
+		REQUIRE(oss.str() == " Test");
 	}
 }
 
