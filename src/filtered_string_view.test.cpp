@@ -201,6 +201,50 @@ TEST_CASE("split function") {
 	REQUIRE(v3[2].empty());
 }
 
+TEST_CASE("substr function") {
+	auto pred = [](const char& c) { return std::isupper(static_cast<unsigned char>(c)); };
+
+	SECTION("Basic substring extraction") {
+		auto sv = fsv::filtered_string_view{"Siberian Husky"};
+		auto sub_sv = fsv::substr(sv, 9);
+		std::ostringstream oss;
+		oss << sub_sv;
+		REQUIRE(oss.str() == "Husky");
+	}
+
+	SECTION("Substring with predicate") {
+		auto sv = fsv::filtered_string_view{"Sled Dog", pred};
+		auto sub_sv = fsv::substr(sv, 0, 2);
+		std::ostringstream oss;
+		oss << sub_sv;
+		REQUIRE(oss.str() == "SD");
+	}
+
+	SECTION("Empty substring") {
+		auto sv = fsv::filtered_string_view{"Empty String Test"};
+		auto sub_sv = fsv::substr(sv, 5, 0);
+		std::ostringstream oss;
+		oss << sub_sv;
+		REQUIRE(oss.str() == "");
+	}
+
+	SECTION("Negative count resulting in full substring from pos") {
+		auto sv = fsv::filtered_string_view{"Full Substring Test"};
+		auto sub_sv = fsv::substr(sv, 5, -1);
+		std::ostringstream oss;
+		oss << sub_sv;
+		REQUIRE(oss.str() == "Substring Test");
+	}
+
+	SECTION("Count exceeding the length of the string") {
+		auto sv = fsv::filtered_string_view{"Boundary Test"};
+		auto sub_sv = fsv::substr(sv, 8, 50);
+		std::ostringstream oss;
+		oss << sub_sv;
+		REQUIRE(oss.str() == "Test");
+	}
+}
+
 TEST_CASE("Iterators") {
 	std::string str = "iterator";
 	fsv::filtered_string_view sv(str);
