@@ -178,9 +178,9 @@ namespace fsv {
 		}
 
 		const char* start = fsv.data();
-		const char* end = fsv.data() + fsv.size();
+		const char* end = fsv.data() + fsv.length();
 		const char* delim_start = tok.data();
-		std::size_t delim_length = tok.size();
+		std::size_t delim_length = tok.length();
 		const char* current = start;
 		while (current < end) {
 			const char* next_delim = std::search(current, end, delim_start, delim_start + delim_length);
@@ -189,8 +189,9 @@ namespace fsv {
 				break;
 			}
 
-			result.emplace_back(current,
-			                    [current, next_delim](const char& c) { return &c >= current && &c < next_delim; });
+			result.emplace_back(current, [current, next_delim, fsv](const char& c) {
+				return &c >= current && &c < next_delim && fsv.predicate()(c);
+			});
 			current = next_delim + delim_length;
 		}
 
