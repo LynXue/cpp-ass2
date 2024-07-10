@@ -3,6 +3,7 @@
 #include <catch2/catch.hpp>
 #include <cstring>
 #include <set>
+#include <vector>
 
 TEST_CASE("Default constructor") {
 	fsv::filtered_string_view sv;
@@ -250,4 +251,42 @@ TEST_CASE("Iterators") {
 		result.push_back(*it);
 	}
 	REQUIRE(result == str);
+}
+
+TEST_CASE("Default predicate iterator test") {
+	fsv::filtered_string_view fsv1{"corgi"};
+	std::vector<char> result{fsv1.begin(), fsv1.end()};
+	REQUIRE(result == std::vector<char>{'c', 'o', 'r', 'g', 'i'});
+}
+
+TEST_CASE("Custom predicate iterator test") {
+	fsv::filtered_string_view fsv2{"samoyed", [](const char& c) {
+		                               return !(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+	                               }};
+	auto it = fsv2.begin();
+	REQUIRE(*it == 's');
+	REQUIRE(*std::next(it) == 'm');
+	REQUIRE(*std::next(it, 2) == 'y');
+	REQUIRE(*std::next(it, 3) == 'd');
+}
+
+TEST_CASE("Reverse iterator test") {
+	fsv::filtered_string_view fsv3{"milo", [](const char& c) { return !(c == 'i' || c == 'o'); }};
+	std::vector<char> result{fsv3.rbegin(), fsv3.rend()};
+	REQUIRE(result == std::vector<char>{'l', 'm'});
+}
+
+TEST_CASE("Const iterator test") {
+	const auto str = std::string("tosa");
+	const fsv::filtered_string_view fsv4{str};
+	auto it = fsv4.cend();
+	REQUIRE(*std::prev(it) == 'a');
+	REQUIRE(*std::prev(it, 2) == 's');
+}
+
+TEST_CASE("Range iteration test") {
+	const auto str = std::string("puppy");
+	const fsv::filtered_string_view fsv5{str, [](const char& c) { return !(c == 'u' || c == 'y'); }};
+	std::vector<char> result{fsv5.begin(), fsv5.end()};
+	REQUIRE(result == std::vector<char>{'p', 'p', 'p'});
 }
