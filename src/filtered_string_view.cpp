@@ -194,6 +194,9 @@ namespace fsv {
 			});
 			current = next_delim + delim_length;
 		}
+		if (current == end) {
+			result.push_back("");
+		}
 
 		return result;
 	}

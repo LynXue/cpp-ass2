@@ -23,7 +23,6 @@ namespace fsv {
 			iter(const char* ptr, const filtered_string_view* view);
 
 			auto operator*() const -> reference;
-			auto operator->() const -> pointer;
 
 			auto operator++() -> iter&;
 			auto operator++(int) -> iter;
