@@ -290,3 +290,36 @@ TEST_CASE("Range iteration test") {
 	std::vector<char> result{fsv5.begin(), fsv5.end()};
 	REQUIRE(result == std::vector<char>{'p', 'p', 'p'});
 }
+
+TEST_CASE("Reverse range iteration test") {
+	const auto str = std::string("tosa");
+	const fsv::filtered_string_view fsv6{str, [](const char& c) { return !(c == 'o' || c == 's'); }};
+	std::vector<char> result{fsv6.rbegin(), fsv6.rend()};
+	REQUIRE(result == std::vector<char>{'a', 't'});
+}
+
+TEST_CASE("Iterator const correctness") {
+	fsv::filtered_string_view fsv1{"corgi"};
+	auto it = fsv1.begin();
+	REQUIRE(std::is_same_v<decltype(*it), const char&>);
+}
+
+TEST_CASE("Const iterator const correctness") {
+	const auto str = std::string("tosa");
+	const fsv::filtered_string_view fsv2{str};
+	auto it = fsv2.cbegin();
+	REQUIRE(std::is_same_v<decltype(*it), const char&>);
+}
+
+TEST_CASE("Reverse iterator const correctness") {
+	fsv::filtered_string_view fsv3{"milo"};
+	auto it = fsv3.rbegin();
+	REQUIRE(std::is_same_v<decltype(*it), const char&>);
+}
+
+TEST_CASE("Const reverse iterator const correctness") {
+	const auto str = std::string("tosa");
+	const fsv::filtered_string_view fsv4{str};
+	auto it = fsv4.crbegin();
+	REQUIRE(std::is_same_v<decltype(*it), const char&>);
+}
