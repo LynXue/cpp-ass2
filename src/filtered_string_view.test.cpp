@@ -209,7 +209,7 @@ TEST_CASE("substr function") {
 	SECTION("Basic substring extraction") {
 		auto sv = fsv::filtered_string_view{"Siberian Husky"};
 		auto sub_sv = fsv::substr(sv, 9);
-		std::ostringstream oss;
+		auto oss = std::ostringstream();
 		oss << sub_sv;
 		REQUIRE(oss.str() == "Husky");
 	}
@@ -217,7 +217,7 @@ TEST_CASE("substr function") {
 	SECTION("Substring with predicate") {
 		auto sv = fsv::filtered_string_view{"Sled Dog", pred};
 		auto sub_sv = fsv::substr(sv, 0, 2);
-		std::ostringstream oss;
+		auto oss = std::ostringstream();
 		oss << sub_sv;
 		REQUIRE(oss.str() == "SD");
 	}
@@ -227,8 +227,8 @@ TEST_CASE("substr function") {
 		auto sv2 = fsv::filtered_string_view{"HELLO World", pred};
 		auto sub_sv1 = fsv::substr(sv, 3);
 		auto sub_sv2 = fsv::substr(sv2, 3, -5);
-		std::ostringstream oss1;
-		std::ostringstream oss2;
+		auto oss1 = std::ostringstream();
+		auto oss2 = std::ostringstream();
 		oss1 << sub_sv1;
 		oss2 << sub_sv2;
 		REQUIRE(oss1.str() == "L");
@@ -238,16 +238,16 @@ TEST_CASE("substr function") {
 	SECTION("Count exceeding the length of the string") {
 		auto sv = fsv::filtered_string_view{"Boundary Test"};
 		auto sub_sv = fsv::substr(sv, 8, 50);
-		std::ostringstream oss;
+		auto oss = std::ostringstream();
 		oss << sub_sv;
 		REQUIRE(oss.str() == " Test");
 	}
 }
 
 TEST_CASE("Iterators") {
-	std::string str = "iterator";
-	fsv::filtered_string_view sv(str);
-	std::string result;
+	auto str = std::string("iterator");
+	auto sv = fsv::filtered_string_view(str);
+	auto result = std::string();
 	for (auto it = sv.begin(); it != sv.end(); ++it) {
 		result.push_back(*it);
 	}
@@ -255,15 +255,15 @@ TEST_CASE("Iterators") {
 }
 
 TEST_CASE("Default predicate iterator test") {
-	fsv::filtered_string_view fsv1{"corgi"};
-	std::vector<char> result{fsv1.begin(), fsv1.end()};
+	auto fsv1 = fsv::filtered_string_view{"corgi"};
+	auto result = std::vector<char>{fsv1.begin(), fsv1.end()};
 	REQUIRE(result == std::vector<char>{'c', 'o', 'r', 'g', 'i'});
 }
 
 TEST_CASE("Custom predicate iterator test") {
-	fsv::filtered_string_view fsv2{"samoyed", [](const char& c) {
-		                               return !(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
-	                               }};
+	auto fsv2 = fsv::filtered_string_view{"samoyed", [](const auto& c) {
+		                                      return !(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+	                                      }};
 	auto it = fsv2.begin();
 	REQUIRE(*it == 's');
 	REQUIRE(*std::next(it) == 'm');
@@ -272,14 +272,14 @@ TEST_CASE("Custom predicate iterator test") {
 }
 
 TEST_CASE("Reverse iterator test") {
-	fsv::filtered_string_view fsv3{"milo", [](const char& c) { return !(c == 'i' || c == 'o'); }};
-	std::vector<char> result{fsv3.rbegin(), fsv3.rend()};
+	auto fsv3 = fsv::filtered_string_view{"milo", [](const auto& c) { return !(c == 'i' || c == 'o'); }};
+	auto result = std::vector<char>{fsv3.rbegin(), fsv3.rend()};
 	REQUIRE(result == std::vector<char>{'l', 'm'});
 }
 
 TEST_CASE("Const iterator test") {
 	const auto str = std::string("tosa");
-	const fsv::filtered_string_view fsv4{str};
+	const auto fsv4 = fsv::filtered_string_view{str};
 	auto it = fsv4.cend();
 	REQUIRE(*std::prev(it) == 'a');
 	REQUIRE(*std::prev(it, 2) == 's');
@@ -287,40 +287,40 @@ TEST_CASE("Const iterator test") {
 
 TEST_CASE("Range iteration test") {
 	const auto str = std::string("puppy");
-	const fsv::filtered_string_view fsv5{str, [](const char& c) { return !(c == 'u' || c == 'y'); }};
-	std::vector<char> result{fsv5.begin(), fsv5.end()};
+	const auto fsv5 = fsv::filtered_string_view{str, [](const auto& c) { return !(c == 'u' || c == 'y'); }};
+	auto result = std::vector<char>{fsv5.begin(), fsv5.end()};
 	REQUIRE(result == std::vector<char>{'p', 'p', 'p'});
 }
 
 TEST_CASE("Reverse range iteration test") {
 	const auto str = std::string("tosa");
-	const fsv::filtered_string_view fsv6{str, [](const char& c) { return !(c == 'o' || c == 's'); }};
-	std::vector<char> result{fsv6.rbegin(), fsv6.rend()};
+	const auto fsv6 = fsv::filtered_string_view{str, [](const auto& c) { return !(c == 'o' || c == 's'); }};
+	auto result = std::vector<char>{fsv6.rbegin(), fsv6.rend()};
 	REQUIRE(result == std::vector<char>{'a', 't'});
 }
 
 TEST_CASE("Iterator const correctness") {
-	fsv::filtered_string_view fsv1{"corgi"};
+	auto fsv1 = fsv::filtered_string_view{"corgi"};
 	auto it = fsv1.begin();
 	REQUIRE(std::is_same_v<decltype(*it), const char&>);
 }
 
 TEST_CASE("Const iterator const correctness") {
 	const auto str = std::string("tosa");
-	const fsv::filtered_string_view fsv2{str};
+	const auto fsv2 = fsv::filtered_string_view{str};
 	auto it = fsv2.cbegin();
 	REQUIRE(std::is_same_v<decltype(*it), const char&>);
 }
 
 TEST_CASE("Reverse iterator const correctness") {
-	fsv::filtered_string_view fsv3{"milo"};
+	auto fsv3 = fsv::filtered_string_view{"milo"};
 	auto it = fsv3.rbegin();
 	REQUIRE(std::is_same_v<decltype(*it), const char&>);
 }
 
 TEST_CASE("Const reverse iterator const correctness") {
 	const auto str = std::string("tosa");
-	const fsv::filtered_string_view fsv4{str};
+	const auto fsv4 = fsv::filtered_string_view{str};
 	auto it = fsv4.crbegin();
 	REQUIRE(std::is_same_v<decltype(*it), const char&>);
 }
