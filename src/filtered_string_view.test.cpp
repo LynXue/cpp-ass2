@@ -6,24 +6,24 @@
 #include <vector>
 
 TEST_CASE("Default constructor") {
-	fsv::filtered_string_view sv;
+	auto sv = fsv::filtered_string_view();
 	REQUIRE(sv.size() == 0);
 	REQUIRE(sv.empty());
 	REQUIRE(sv.data() == nullptr);
 }
 
 TEST_CASE("Constructor with std::string") {
-	std::string str = "hello";
-	fsv::filtered_string_view sv(str);
+	auto str = std::string("hello");
+	auto sv = fsv::filtered_string_view(str);
 	REQUIRE(sv.size() == str.size());
 	REQUIRE(!sv.empty());
 	REQUIRE(sv.data() == str.data());
 }
 
 TEST_CASE("Constructor with std::string and predicate") {
-	std::string str = "hello";
-	auto predicate = [](const char& c) { return c != 'l'; };
-	fsv::filtered_string_view sv(str, predicate);
+	auto str = std::string("hello");
+	auto predicate = [](const auto& c) { return c != 'l'; };
+	auto sv = fsv::filtered_string_view(str, predicate);
 	REQUIRE(sv.size() == 3);
 	REQUIRE(!sv.empty());
 	REQUIRE(sv[0] == 'h');
@@ -32,17 +32,17 @@ TEST_CASE("Constructor with std::string and predicate") {
 }
 
 TEST_CASE("Constructor with C-string") {
-	const char* str = "hello";
-	fsv::filtered_string_view sv(str);
+	auto str = "hello";
+	auto sv = fsv::filtered_string_view(str);
 	REQUIRE(sv.size() == std::strlen(str));
 	REQUIRE(!sv.empty());
 	REQUIRE(sv.data() == str);
 }
 
 TEST_CASE("Constructor with C-string and predicate") {
-	const char* str = "hello world";
-	auto predicate = [](const char& c) { return c != ' '; };
-	fsv::filtered_string_view sv(str, predicate);
+	auto str = "hello world";
+	auto predicate = [](const auto& c) { return c != ' '; };
+	auto sv = fsv::filtered_string_view(str, predicate);
 	REQUIRE(sv.size() == 10);
 	REQUIRE(!sv.empty());
 	REQUIRE(sv[0] == 'h');
@@ -53,17 +53,17 @@ TEST_CASE("Constructor with C-string and predicate") {
 }
 
 TEST_CASE("Copy constructor") {
-	std::string str = "hello world";
-	fsv::filtered_string_view sv1(str);
-	fsv::filtered_string_view sv2 = sv1;
+	auto str = std::string("hello world");
+	auto sv1 = fsv::filtered_string_view(str);
+	auto sv2 = fsv::filtered_string_view(sv1);
 	REQUIRE(sv1.data() == sv2.data());
 	REQUIRE(sv1.size() == sv2.size());
 }
 
 TEST_CASE("Move constructor") {
-	std::string str = "move";
-	fsv::filtered_string_view sv1(str);
-	fsv::filtered_string_view sv2(std::move(sv1));
+	auto str = std::string("move");
+	auto sv1 = fsv::filtered_string_view(str);
+	auto sv2 = fsv::filtered_string_view(std::move(sv1));
 	REQUIRE(sv2.size() == str.size());
 	REQUIRE(sv2.data() == str.data());
 	REQUIRE(sv1.size() == 0);
@@ -71,11 +71,11 @@ TEST_CASE("Move constructor") {
 }
 
 TEST_CASE("Assignment operator") {
-	std::string str1 = "assign1";
-	std::string str2 = "hello";
-	auto pred = [](const char& c) { return c == 'a' || c == 's'; };
-	fsv::filtered_string_view sv1(str1, pred);
-	fsv::filtered_string_view sv2(str2);
+	auto str1 = std::string("assign1");
+	auto str2 = std::string("hello");
+	auto pred = [](const auto& c) { return c == 'a' || c == 's'; };
+	auto sv1 = fsv::filtered_string_view(str1, pred);
+	auto sv2 = fsv::filtered_string_view(str2);
 	sv2 = sv1;
 	REQUIRE(sv1.size() == 3);
 	REQUIRE(sv1.size() == sv2.size());
@@ -83,10 +83,10 @@ TEST_CASE("Assignment operator") {
 }
 
 TEST_CASE("Move assignment operator") {
-	std::string str = "transfer";
-	auto pred = [](const char& c) { return c == 't' || c == 'r'; };
-	fsv::filtered_string_view sv1(str, pred);
-	fsv::filtered_string_view sv2;
+	auto str = std::string("transfer");
+	auto pred = [](const auto& c) { return c == 't' || c == 'r'; };
+	auto sv1 = fsv::filtered_string_view(str, pred);
+	auto sv2 = fsv::filtered_string_view();
 	REQUIRE(sv1.size() == 3);
 	sv2 = std::move(sv1);
 	REQUIRE(sv2.size() == 3);
@@ -95,16 +95,16 @@ TEST_CASE("Move assignment operator") {
 }
 
 TEST_CASE("String conversion") {
-	std::string str = "convertme";
-	fsv::filtered_string_view sv(str);
-	std::string result = static_cast<std::string>(sv);
+	auto str = std::string("convertme");
+	auto sv = fsv::filtered_string_view(str);
+	auto result = static_cast<std::string>(sv);
 	REQUIRE(result == str);
 }
 
 TEST_CASE("Subscript operator") {
-	std::string str = "indexing";
-	auto pred = [](const char& c) { return c == 'i' || c == 'n'; };
-	fsv::filtered_string_view sv(str, pred);
+	auto str = std::string("indexing");
+	auto pred = [](const auto& c) { return c == 'i' || c == 'n'; };
+	auto sv = fsv::filtered_string_view(str, pred);
 	REQUIRE(sv[0] == 'i');
 	REQUIRE(sv[1] == 'n');
 	REQUIRE(sv[2] == 'i');
@@ -112,9 +112,9 @@ TEST_CASE("Subscript operator") {
 }
 
 TEST_CASE("At function") {
-	std::string str = "position";
-	auto pred = [](const char& c) { return c == 'p' || c == 'o'; };
-	fsv::filtered_string_view sv(str, pred);
+	auto str = std::string("position");
+	auto pred = [](const auto& c) { return c == 'p' || c == 'o'; };
+	auto sv = fsv::filtered_string_view(str, pred);
 	REQUIRE(sv.at(0) == 'p');
 	REQUIRE(sv.at(1) == 'o');
 	REQUIRE(sv.at(2) == 'o');
@@ -123,9 +123,9 @@ TEST_CASE("At function") {
 
 TEST_CASE("Size function") {
 	auto vowels = std::set<char>{'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U'};
-	auto is_vowel = [&vowels](const char& c) { return vowels.contains(c); };
-	fsv::filtered_string_view sv{"Malamute", is_vowel};
-	fsv::filtered_string_view sv2{"hello"};
+	auto is_vowel = [&vowels](const auto& c) { return vowels.contains(c); };
+	auto sv = fsv::filtered_string_view{"Malamute", is_vowel};
+	auto sv2 = fsv::filtered_string_view{"hello"};
 	REQUIRE(sv.size() == 4);
 	REQUIRE(sv2.size() == 5);
 }
@@ -151,7 +151,7 @@ TEST_CASE("Equality and relational comparison") {
 
 TEST_CASE("filtered_string_view output stream") {
 	auto fsv = fsv::filtered_string_view{"c++ > golang > rust", [](const char& c) { return c == 'c' || c == '+'; }};
-	std::ostringstream oss;
+	auto oss = std::ostringstream();
 	oss << fsv;
 	REQUIRE(oss.str() == "c++");
 }
@@ -164,7 +164,7 @@ TEST_CASE("compose function") {
 	};
 
 	auto sv = compose(best_languages, vf);
-	std::ostringstream oss;
+	auto oss = std::ostringstream();
 	oss << sv;
 	REQUIRE(oss.str() == "c/c++");
 }
@@ -177,7 +177,8 @@ TEST_CASE("split function") {
 	auto v = split(sv, tok);
 
 	REQUIRE(v.size() == 2);
-	std::ostringstream oss1, oss2;
+	auto oss1 = std::ostringstream();
+	auto oss2 = std::ostringstream();
 	oss1 << v[0];
 	oss2 << v[1];
 	REQUIRE(oss1.str() == "DEADBEEF");
@@ -188,7 +189,7 @@ TEST_CASE("split function") {
 	auto v2 = split(sv2, tok2);
 	REQUIRE(v2.size() == 3);
 	REQUIRE(v2[0].empty());
-	std::ostringstream oss3;
+	auto oss3 = std::ostringstream();
 	oss3 << v2[1];
 	REQUIRE(oss3.str() == "a");
 	REQUIRE(v2[2].empty());
