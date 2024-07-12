@@ -73,7 +73,7 @@ namespace fsv {
 	}
 
 	filtered_string_view::operator std::string() const {
-		std::string result;
+		auto result = std::string();
 		for (auto i = 0U; i < length_; ++i) {
 			if (predicate_(data_[i])) {
 				result.push_back(data_[i]);
@@ -157,7 +157,7 @@ namespace fsv {
 
 	// compose function
 	auto compose(const filtered_string_view& fsv, const std::vector<filter>& filts) -> filtered_string_view {
-		filter composed_predicate = [filts](const char& c) {
+		auto composed_predicate = [filts](const char& c) {
 			for (const auto& f : filts) {
 				if (!f(c)) {
 					return false;
@@ -170,20 +170,21 @@ namespace fsv {
 
 	// split function
 	auto split(const filtered_string_view& fsv, const filtered_string_view& tok) -> std::vector<filtered_string_view> {
-		std::vector<filtered_string_view> result;
+		auto result = std::vector<filtered_string_view>();
 
 		if (fsv.empty()) {
 			result.push_back(fsv);
 			return result;
 		}
 
-		const char* start = fsv.data();
-		const char* end = fsv.data() + fsv.length();
-		const char* delim_start = tok.data();
-		std::size_t delim_length = tok.length();
-		const char* current = start;
+		auto start = fsv.data();
+		auto end = fsv.data() + fsv.length();
+		auto delim_start = tok.data();
+		auto delim_length = tok.length();
+		auto current = start;
+
 		while (current < end) {
-			const char* next_delim = std::search(current, end, delim_start, delim_start + delim_length);
+			auto next_delim = std::search(current, end, delim_start, delim_start + delim_length);
 			if (next_delim == end) {
 				result.emplace_back(current, fsv.predicate());
 				break;
@@ -208,8 +209,8 @@ namespace fsv {
 			                        + "): invalid position"};
 		}
 
-		std::size_t start_pos = static_cast<std::size_t>(pos);
-		std::size_t rcount = (count <= 0) ? fsv.size() - start_pos : static_cast<std::size_t>(count);
+		auto start_pos = static_cast<std::size_t>(pos);
+		auto rcount = (count <= 0) ? fsv.size() - start_pos : static_cast<std::size_t>(count);
 		if (start_pos + rcount > fsv.size()) {
 			rcount = fsv.size() - start_pos;
 		}
